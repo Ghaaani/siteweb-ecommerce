@@ -14,12 +14,11 @@ return new class extends Migration
         Schema::create('cart_items', function (Blueprint $table) {
 
             $table->id();
-            $table->int('product_id');
+            $table->integer('product_id');
             $table->string('name',30);
-            $table->int('prix');
-            $table->int('quantity');
-            $table->timestamps('created_at');
-            $table->timestamps('updated_at');
+            $table->decimal('prix', 8, 2);
+            $table->integer('quantity');
+            $table->timestamps();
 
         });
     }

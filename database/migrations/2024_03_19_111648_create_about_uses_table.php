@@ -18,8 +18,7 @@ return new class extends Migration
             $table->string('sous_titre', 30);
             $table->text('image');
             $table->text('description');
-            $table->timestamps('created_at');
-            $table->timestamps('updated_at');
+            $table->timestamps();
             
         });
     }

@@ -9,7 +9,7 @@ class about_us extends Model
 {
     use HasFactory;
 
-    protected $filliable =[
+    protected $fillable =[
         'id',
         'titre',
         'sous_titre',

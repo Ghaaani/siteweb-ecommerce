@@ -14,7 +14,12 @@ class about_usController extends Controller
      */
     public function index()
     {
-        $about = about_us::first();
+        $about = about_us::first() ?? about_us::create([
+            'titre' => 'About us',
+            'sous_titre' => '',
+            'image' => '',
+            'description' => '',
+        ]);
         $number = cart_item::All();
         $carts = cart_item::latest()->take(2)->get();
 

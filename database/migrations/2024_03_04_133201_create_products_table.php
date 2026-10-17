@@ -18,12 +18,12 @@ return new class extends Migration
             $table->string('name', 30);
             $table->text('description');
             $table->string('SKU', 30);
-            $table->int('category_id');
-            $table->int('inventory_id');
+            $table->integer('category_id')->nullable();
+            $table->integer('inventory_id')->nullable();
             $table->decimal('price');
-            $table->int('discount_id');
-            $table->timestamps('created_at');
-            $table->timestamps('updated_at');
+            $table->integer('discount_id')->nullable();
+            $table->string('product_list', 30)->nullable();
+            $table->timestamps();
             
         });
     }
