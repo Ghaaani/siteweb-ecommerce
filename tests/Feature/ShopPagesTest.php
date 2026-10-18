@@ -13,8 +13,8 @@ class ShopPagesTest extends TestCase
     use RefreshDatabase;
 
     private array $pages = [
-        '/', '/index', '/shop', '/cart', '/checkout', '/contact', '/about',
-        '/aboutus', '/products', '/product_categories', '/wishlist', '/single_product',
+        '/index', '/shop', '/cart', '/checkout', '/contact', '/about',
+        '/wishlist', '/single_product',
     ];
 
     public function test_all_pages_render_on_an_empty_database(): void
@@ -31,6 +31,11 @@ class ShopPagesTest extends TestCase
         foreach ($this->pages as $page) {
             $this->get($page)->assertOk();
         }
+    }
+
+    public function test_home_redirects_to_the_shop(): void
+    {
+        $this->get('/')->assertRedirect('/index');
     }
 
     public function test_seeder_is_idempotent(): void

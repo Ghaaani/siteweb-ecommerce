@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\product;
 use App\Models\product_category;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -12,6 +13,12 @@ use Tests\TestCase;
 class AdminProductTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->actingAs(User::factory()->create());
+    }
 
     public function test_category_can_be_created(): void
     {

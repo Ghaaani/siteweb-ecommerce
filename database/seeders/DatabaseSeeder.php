@@ -6,8 +6,10 @@ use App\Models\about_us;
 use App\Models\contact;
 use App\Models\product;
 use App\Models\product_category;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,6 +18,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Admin account comes from the environment so no default password ever exists.
+        $adminEmail = config('app.admin_email');
+        $adminPassword = config('app.admin_password');
+
+        if ($adminEmail && $adminPassword) {
+            User::updateOrCreate(
+                ['email' => $adminEmail],
+                ['name' => 'Admin', 'password' => Hash::make($adminPassword)]
+            );
+        }
+
         $categories = collect(['Chairs', 'Lamps', 'Tables'])->map(fn ($name) => product_category::firstOrCreate(
             ['name' => $name],
             ['description' => "$name collection"]

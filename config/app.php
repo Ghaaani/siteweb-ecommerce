@@ -146,6 +146,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Deployment settings
+    |--------------------------------------------------------------------------
+    |
+    | Read through config() (not env()) so they keep working with config:cache.
+    |
+    */
+
+    'force_https' => (bool) env('FORCE_HTTPS', false),
+    'admin_email' => env('ADMIN_EMAIL'),
+    'admin_password' => env('ADMIN_PASSWORD'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Autoloaded Service Providers
     |--------------------------------------------------------------------------
     |
