@@ -8,17 +8,23 @@
     var Ecom = window.Ecom || {};
 
     /* ---------------- Toast ---------------- */
+    Ecom.esc = function (raw) {
+        return String(raw == null ? '' : raw)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    };
+
     Ecom.toast = function (message, type) {
         var $container = $('#ecom-toast-container');
         if (!$container.length) {
-            $container = $('<div id="ecom-toast-container"></div>').appendTo('body');
+            $container = $('<div id="ecom-toast-container" role="status" aria-live="polite"></div>').appendTo('body');
         }
 
         var icon = type === 'error' ? 'zmdi-alert-circle' : 'zmdi-check-circle';
         var $toast = $(
             '<div class="ecom-toast ecom-toast--' + (type || 'success') + '">' +
-                '<i class="zmdi ' + icon + '"></i>' +
-                '<span>' + message + '</span>' +
+                '<i class="zmdi ' + icon + '" aria-hidden="true"></i>' +
+                '<span>' + Ecom.esc(message) + '</span>' +
             '</div>'
         );
 
@@ -52,10 +58,16 @@
     };
 
     /* ---------------- Add to cart ---------------- */
+    Ecom.cartCsrf = function () {
+        var meta = document.querySelector('meta[name="csrf-token"]');
+        return meta ? meta.getAttribute('content') : '';
+    };
+
     Ecom.addToCart = function (productId, onDone) {
         $.ajax({
             url: '/insert-Poduct/' + productId,
-            type: 'GET',
+            type: 'POST',
+            headers: { 'X-CSRF-TOKEN': Ecom.cartCsrf() },
             dataType: 'json',
             success: function (response) {
                 Ecom.updateCartBadge();
@@ -64,7 +76,7 @@
             },
             error: function (error) {
                 console.error('Error adding product to cart:', error);
-                Ecom.toast('Could not add this product to your cart', 'error');
+                Ecom.toast('Could not add this product to your cart — please try again', 'error');
             }
         });
     };
@@ -80,7 +92,8 @@
     Ecom.removeFromCart = function (itemId, onDone) {
         $.ajax({
             url: '/remove-product/' + itemId,
-            type: 'GET',
+            type: 'POST',
+            headers: { 'X-CSRF-TOKEN': Ecom.cartCsrf() },
             dataType: 'json',
             success: function (response) {
                 Ecom.updateCartBadge();

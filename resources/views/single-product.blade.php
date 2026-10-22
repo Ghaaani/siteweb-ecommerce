@@ -1,5 +1,8 @@
 @extends('client.layouts.app')
 
+@section('title', $product->name)
+@section('meta', \Illuminate\Support\Str::limit(strip_tags($product->description), 150) ?: 'Product details')
+
 @section('content')
 
         <!-- Start page content -->
@@ -9,23 +12,32 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="single-product-img">
-                                <img src="{{ $product->image ? asset('storage/images/product/'.$product->image) : asset('client/img/product/1.jpg') }}" alt="{{ $product->name }}">
+                                @php
+                                    $mainImage = $product->image ? asset('storage/images/product/'.$product->image) : asset('client/img/product/1.jpg');
+                                    $mainDims = ($product->image && is_file(public_path('storage/images/product/'.$product->image))) ? getimagesize(public_path('storage/images/product/'.$product->image)) : null;
+                                    $inWishlist = in_array($product->id, (array) session('wishlist', []));
+                                @endphp
+                                <img src="{{ $mainImage }}" alt="{{ $product->name }}"
+                                    @if($mainDims) width="{{ $mainDims[0] }}" height="{{ $mainDims[1] }}" @endif
+                                    fetchpriority="high" decoding="async">
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="single-product-content">
-                                <h2 class="uppercase">{{ $product->name }}</h2>
+                                <h1 class="uppercase">{{ $product->name }}</h1>
                                 <p class="text-black-5">SKU: {{ $product->SKU }}</p>
-                                <button type="button" class="ecom-wish" data-product-id="{{ $product->id }}" onclick="ecomToggleWishlist({{ $product->id }}, this)" title="Add to wish list" aria-label="Add to wish list" style="position:static;display:inline-flex;">
-                                    <i class="zmdi zmdi-favorite-outline"></i>
+                                <button type="button" class="ecom-wish {{ $inWishlist ? 'is-active' : '' }}" data-product-id="{{ $product->id }}" onclick="ecomToggleWishlist({{ $product->id }}, this)" title="Add to wish list" aria-label="Add to wish list" style="position:static;display:inline-flex;">
+                                    <i class="zmdi {{ $inWishlist ? 'zmdi-favorite' : 'zmdi-favorite-outline' }}"></i>
                                 </button>
-                                <div class="pro-rating mb-20">
-                                    <a href="#" onclick="return false;"><i class="zmdi zmdi-star"></i></a>
-                                    <a href="#" onclick="return false;"><i class="zmdi zmdi-star"></i></a>
-                                    <a href="#" onclick="return false;"><i class="zmdi zmdi-star"></i></a>
-                                    <a href="#" onclick="return false;"><i class="zmdi zmdi-star-half"></i></a>
-                                    <a href="#" onclick="return false;"><i class="zmdi zmdi-star-outline"></i></a>
-                                </div>
+                                <p class="pro-rating mb-20" aria-label="Rated 4 and a half stars out of 5">
+                                    <span class="rate-icons" aria-hidden="true">
+                                        <i class="zmdi zmdi-star"></i>
+                                        <i class="zmdi zmdi-star"></i>
+                                        <i class="zmdi zmdi-star"></i>
+                                        <i class="zmdi zmdi-star-half"></i>
+                                        <i class="zmdi zmdi-star-outline"></i>
+                                    </span>
+                                </p>
                                 <div class="price-box-3 mb-20">
                                     <div class="s-price-box">
                                         <span class="new-price">${{ number_format($product->price, 2) }}</span>
@@ -34,34 +46,33 @@
                                 <p class="mb-30">{{ $product->description }}</p>
 
                                 <div class="product-quantity mb-30">
-                                    <label class="d-block mb-10">Quantity</label>
+                                    <label class="d-block mb-10" for="product-qty">Quantity</label>
                                     <div class="cart-plus-minus">
-                                        <div class="dec qtybutton"><button type="button" onclick="ecomChangeQty(-1)">-</button></div>
-                                        <input type="text" id="product-qty" value="1" class="cart-plus-minus-box" readonly>
-                                        <div class="inc qtybutton"><button type="button" onclick="ecomChangeQty(1)">+</button></div>
+                                        <div class="dec qtybutton"><button type="button" onclick="ecomChangeQty(-1)" aria-label="Decrease quantity">−</button></div>
+                                        <input type="text" id="product-qty" value="1" inputmode="numeric" class="cart-plus-minus-box" readonly>
+                                        <div class="inc qtybutton"><button type="button" onclick="ecomChangeQty(1)" aria-label="Increase quantity">+</button></div>
                                     </div>
                                 </div>
 
                                 <div class="ecom-card-actions mb-30" style="max-width: 420px;">
                                     <button type="button" class="ecom-btn-add" onclick="ecomAddQtyToCart()">
-                                        <i class="zmdi zmdi-shopping-cart-plus"></i> Add to cart
+                                        <i class="zmdi zmdi-shopping-cart-plus" aria-hidden="true"></i> Add to cart
                                     </button>
                                     <button type="button" class="ecom-btn-buy" onclick="ecomBuyQtyNow()">Buy now</button>
                                 </div>
 
                                 <ul class="list-unstyled ecom-product-meta">
-                                    <li><i class="zmdi zmdi-check"></i> Free delivery over $99</li>
-                                    <li><i class="zmdi zmdi-check"></i> 30 day returns</li>
-                                    <li><i class="zmdi zmdi-check"></i> Pay with PayPal, credit or debit card</li>
+                                    <li><i class="zmdi zmdi-check" aria-hidden="true"></i> Free delivery over $99</li>
+                                    <li><i class="zmdi zmdi-check" aria-hidden="true"></i> 30 day returns</li>
+                                    <li><i class="zmdi zmdi-check" aria-hidden="true"></i> Pay with PayPal, credit or debit card</li>
                                 </ul>
 
                                 <div class="social-sharing mt-30">
                                     <h3 class="widget-title-modal">Share this product</h3>
                                     <ul class="social-icons clearfix">
-                                        <li><a href="#" onclick="return false;" title="Facebook"><i class="zmdi zmdi-facebook"></i></a></li>
-                                        <li><a href="#" onclick="return false;" title="Google Plus"><i class="zmdi zmdi-google-plus"></i></a></li>
-                                        <li><a href="#" onclick="return false;" title="Twitter"><i class="zmdi zmdi-twitter"></i></a></li>
-                                        <li><a href="#" onclick="return false;" title="Pinterest"><i class="zmdi zmdi-pinterest"></i></a></li>
+                                        <li><a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}" target="_blank" rel="noopener" title="Share on Facebook"><i class="zmdi zmdi-facebook"></i></a></li>
+                                        <li><a href="https://twitter.com/intent/tweet?url={{ urlencode(url()->current()) }}&text={{ urlencode($product->name) }}" target="_blank" rel="noopener" title="Share on X"><i class="zmdi zmdi-twitter"></i></a></li>
+                                        <li><a href="https://pinterest.com/pin/create/button/?url={{ urlencode(url()->current()) }}&description={{ urlencode($product->name) }}" target="_blank" rel="noopener" title="Pin it"><i class="zmdi zmdi-pinterest"></i></a></li>
                                     </ul>
                                 </div>
                             </div>

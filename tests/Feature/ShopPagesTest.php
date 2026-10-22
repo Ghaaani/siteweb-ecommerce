@@ -61,15 +61,18 @@ class ShopPagesTest extends TestCase
         $this->seed(DatabaseSeeder::class);
         $product = product::first();
 
-        $this->getJson("/insert-Poduct/{$product->id}")->assertOk();
-        $this->getJson("/insert-Poduct/{$product->id}")->assertOk();
+        $this->postJson("/insert-Poduct/{$product->id}")->assertOk();
+        $this->postJson("/insert-Poduct/{$product->id}")->assertOk();
 
         $this->assertSame(1, cart_item::count());
         $item = cart_item::first();
         $this->assertSame(2, (int) $item->quantity);
 
-        $this->getJson("/inc-quantity/{$item->id}")->assertOk();
+        $this->postJson("/inc-quantity/{$item->id}")->assertOk();
         $this->assertSame(3, (int) $item->fresh()->quantity);
+
+        $this->postJson("/dec-quantity/{$item->id}")->assertOk();
+        $this->assertSame(2, (int) $item->fresh()->quantity);
 
         $this->get('/cart')->assertOk();
     }
@@ -78,11 +81,39 @@ class ShopPagesTest extends TestCase
     {
         $this->seed(DatabaseSeeder::class);
         $product = product::first();
-        $this->getJson("/insert-Poduct/{$product->id}")->assertOk();
+        $this->postJson("/insert-Poduct/{$product->id}")->assertOk();
         $item = cart_item::first();
 
-        $this->getJson("/remove-product/{$item->id}")->assertOk();
+        $this->postJson("/remove-product/{$item->id}")->assertOk();
 
         $this->assertSame(0, cart_item::count());
+    }
+
+    public function test_newsletter_signup_persists_and_dedupes(): void
+    {
+        $this->postJson('/subscribe', ['email' => 'shopper@example.com'])
+            ->assertOk()
+            ->assertJson(['success' => true]);
+
+        $this->postJson('/subscribe', ['email' => 'shopper@example.com'])
+            ->assertOk();
+
+        $this->assertSame(1, \App\Models\subscriber::count());
+
+        $this->postJson('/subscribe', ['email' => 'not-an-email'])
+            ->assertStatus(422);
+    }
+
+    public function test_contact_message_is_stored(): void
+    {
+        $this->postJson('/contact', [
+            'con_name' => 'Alex Morgan',
+            'con_email' => 'alex@example.com',
+            'con_subject' => 'Order question',
+            'con_message' => 'Where is my order?',
+        ])->assertOk()->assertJson(['success' => true]);
+
+        $this->postJson('/contact', ['con_name' => '', 'con_email' => 'bad', 'con_message' => ''])
+            ->assertStatus(422);
     }
 }

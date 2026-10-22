@@ -23,6 +23,15 @@ class shopController extends Controller
             $productss = product::where('category_id', $categoryId)->get();
         }
 
+        // Server-side search so filters and search survive a plain link (?category=…&q=…)
+        $term = trim((string) request('q'));
+        if ($term !== '') {
+            $productss = $productss->filter(function ($product) use ($term) {
+                return stripos((string) $product->name, $term) !== false
+                    || stripos((string) $product->description, $term) !== false;
+            })->values();
+        }
+
         $carts = cart_item::latest()->take(2)->get();
 
         $number = cart_item::All();

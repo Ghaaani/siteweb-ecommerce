@@ -98,6 +98,8 @@ class cartController extends Controller
 
         if ((int) $item->quantity <= 0) {
             $item->delete();
+        } else {
+            $item->save();
         }
 
         return response()->json([

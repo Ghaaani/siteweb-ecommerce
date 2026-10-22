@@ -177,7 +177,7 @@ textarea:focus {
 
 input::placeholder,
 textarea::placeholder {
-    color: #a49c8d;
+    color: #7d7466;
 }
 
 /* ---------------- Cart badge ---------------- */
@@ -294,14 +294,24 @@ textarea::placeholder {
     animation: ecomPop 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Respect users who prefer reduced motion */
+/* Respect users who prefer reduced motion: keep state changes instant-readable
+   but never erase feedback entirely (no global 0.01ms kill). */
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+
+    /* Decorative loops stop */
+    .slick-slider .slick-arrow,
+    .ecom-hero-media img { animation: none; }
+
+    /* Feedback becomes instant, not absent */
+    .ecom-rise,
+    .ecom-anim-fade,
+    .ecom-anim-pop {
+        animation-duration: 0.001s;
+        animation-delay: 0s;
     }
+
+    * { transition-duration: 0.001s; }
 }
 
 /* ---------------- Header ---------------- */
@@ -350,8 +360,11 @@ textarea::placeholder {
 }
 
 /* ---------------- Section headings ---------------- */
+/* h1 doubles as the page title on inner pages; keep the same visual weight */
+.section-title h1,
 .section-title h2 {
     font-size: 34px;
+    font-weight: 700;
 }
 
 .section-title h6 {
@@ -609,4 +622,392 @@ textarea::placeholder {
     justify-content: center;
     font-size: 38px;
     animation: ecomPop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+
+/* ============================================================
+   Audit fix pass: hero, form fields, steps, focus, targets
+   ============================================================ */
+
+/* ---------------- Hero (static, single moment) ---------------- */
+main.ecom-main {
+    display: flow-root; /* contain template floats so <main> sizes to its content */
+}
+
+.ecom-hero {
+    background: linear-gradient(135deg, #f3eee4 0%, var(--ecom-bg) 60%);
+    overflow: hidden;
+}
+
+.ecom-hero-inner {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    padding: 40px 0 36px;
+}
+
+.ecom-hero-copy {
+    flex: 1 1 52%;
+    min-width: 0;
+}
+
+.ecom-hero-kicker {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ecom-primary-dark);
+    margin-bottom: 12px;
+}
+
+.ecom-hero-title {
+    font-size: clamp(2.1rem, 4.6vw, 3.4rem);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    color: var(--ecom-ink);
+    margin-bottom: 16px;
+    max-width: 14ch;
+}
+
+.ecom-hero-sub {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ecom-muted);
+    margin-bottom: 26px;
+    max-width: 52ch;
+}
+
+.ecom-hero-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+.ecom-hero-actions .button {
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.ecom-hero-link {
+    font-weight: 600;
+    color: var(--ecom-ink);
+    text-decoration: none;
+    border-bottom: 2px solid var(--ecom-accent);
+    padding-bottom: 2px;
+}
+
+.ecom-hero-link:hover {
+    color: var(--ecom-primary);
+}
+
+.ecom-hero-media {
+    flex: 0 1 48%;
+}
+
+.ecom-hero-media img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--ecom-radius);
+    box-shadow: var(--ecom-shadow-md);
+    display: block;
+}
+
+@media (max-width: 767px) {
+    .ecom-hero-inner { flex-direction: column-reverse; gap: 26px; padding: 18px 0 8px; }
+    .ecom-hero-media { flex-basis: auto; width: 100%; }
+    .ecom-hero-copy { text-align: center; }
+    .ecom-hero-title, .ecom-hero-sub { margin-inline: auto; }
+    .ecom-hero-actions { justify-content: center; }
+}
+
+/* Section subtitles (was h6 inside section titles) */
+.section-title .section-sub {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ecom-muted);
+    margin-top: 6px;
+    margin-bottom: 0;
+}
+
+/* Align hero entrance with the design's single authored moment */
+.ecom-hero .ecom-rise {
+    animation: ecomRise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes ecomRise {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------- Checkout: fields, steps, skip link ---------------- */
+.ecom-field { margin-bottom: 18px; }
+
+.ecom-field label {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ecom-ink);
+    margin-bottom: 7px;
+}
+
+.ecom-field label .ecom-optional {
+    font-weight: 400;
+    color: var(--ecom-muted);
+}
+
+.ecom-field input,
+.ecom-field select,
+.ecom-field textarea {
+    width: 100%;
+    min-height: 46px;
+    border: 1.5px solid var(--ecom-line);
+    border-radius: var(--ecom-radius-sm);
+    background: var(--ecom-surface);
+    padding: 10px 14px;
+    font-size: 14.5px;
+    color: var(--ecom-ink);
+}
+
+.ecom-field textarea { min-height: 96px; }
+
+.ecom-field input[aria-invalid="true"],
+.ecom-field select[aria-invalid="true"],
+.ecom-field textarea[aria-invalid="true"] {
+    border-color: var(--ecom-danger);
+}
+
+.ecom-field-error {
+    color: var(--ecom-danger);
+    font-size: 12.5px;
+    margin-top: 6px;
+    margin-bottom: 0;
+}
+
+.ecom-field--2 { display: inline-block; width: calc(50% - 9px); }
+.ecom-field--2:nth-of-type(odd) { margin-right: 12px; }
+
+@media (max-width: 767px) {
+    .ecom-field--2 { display: block; width: 100%; margin-right: 0; }
+}
+
+/* Checkout stepper: current step is emphasized, siblings muted */
+.ecom-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    list-style: none;
+    padding-left: 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.ecom-steps li { color: var(--ecom-muted); }
+
+.ecom-steps li[aria-current="step"] {
+    color: var(--ecom-ink);
+}
+
+.ecom-steps li[aria-current="step"]::after {
+    content: "";
+    display: block;
+    height: 3px;
+    width: 34px;
+    margin-top: 6px;
+    border-radius: 3px;
+    background: var(--ecom-accent);
+}
+
+.ecom-steps a { color: var(--ecom-muted); }
+.ecom-steps a:hover { color: var(--ecom-primary); }
+
+@media (max-width: 991px) {
+    .ecom-steps { flex-direction: row; flex-wrap: wrap; gap: 18px; margin-bottom: 24px; }
+    .ecom-steps li[aria-current="step"]::after { display: none; }
+}
+
+/* Skip link: visible on keyboard focus */
+.ecom-skip-link {
+    position: absolute;
+    top: -48px;
+    left: 12px;
+    z-index: 1100;
+    background: var(--ecom-ink);
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 16px;
+    border-radius: 0 0 var(--ecom-radius-sm) var(--ecom-radius-sm);
+    text-decoration: none;
+    transition: top 0.15s ease;
+}
+
+.ecom-skip-link:focus {
+    top: 0;
+    color: #fff;
+}
+
+/* ---------------- Focus keyboard affordances ---------------- */
+a:focus-visible,
+button:focus-visible,
+.ecom-steps li[aria-current="step"]:focus-visible {
+    outline: 2px solid var(--ecom-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* ---------------- Browser chrome theming ---------------- */
+::selection {
+    background: rgba(192, 133, 82, 0.28);
+    color: var(--ecom-ink);
+}
+
+/* ---------------- Numeric alignment for money ---------------- */
+.product-subtotal,
+.product-price,
+.pro-price,
+.order-total-price,
+.td-title-2,
+.new-price,
+.old-price {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Order-complete info labels (was h6; keep the template look as paragraphs) */
+.order-info-list li .order-info-label {
+    color: #666;
+    font-weight: 500;
+    margin-bottom: 2px;
+    font-size: 14px;
+}
+
+.order-info-list li p + p {
+    margin-bottom: 0;
+    font-weight: 500;
+    color: var(--ecom-ink);
+}
+
+/* Contact page address lines (was h6) */
+.contact-address .contact-address-line {
+    font-family: 'Raleway', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.contact-address .contact-address-line a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.contact-address .contact-address-line a:hover {
+    color: var(--ecom-primary);
+}
+
+/* ---------------- Touch targets: 44x44 minimum ---------------- */
+.ecom-qty .qtybutton button {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.product-remove button,
+.ecom-wish,
+.widget-search button,
+.cart-toggler i,
+.mean-nav a {
+    min-height: 44px;
+}
+
+.ecom-card-actions button {
+    min-height: 44px;
+}
+
+.category-btn {
+    min-height: 44px;
+    width: 100%;
+    text-align: left;
+}
+
+/* Social spans in the footer (decorative, no dead links) */
+.footer-social-2 span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    opacity: 0.55;
+}
+
+/* Search inputs inside sidebars */
+.widget-search input {
+    min-height: 46px;
+}
+
+/* Newsletter row: flexbox keeps input + button on one line at every width */
+.subcribe form {
+    display: flex;
+    width: 100%;
+}
+
+.subcribe input {
+    width: auto;
+    flex: 1 1 auto;
+    height: 45px;
+    min-height: 45px;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0 18px;
+}
+
+.subcribe .submit-btn-2 {
+    flex: 0 0 auto;
+    height: 45px;
+    width: auto;
+    padding: 0 26px;
+    border: 0;
+    border-left: 2px solid #d4d4d4;
+    border-radius: 0;
+    background: transparent;
+}
+
+/* Footer: calm the giant .section padding so the page does not end in a void */
+.footer-area.section {
+    padding-top: 74px;
+    padding-bottom: 30px;
+}
+
+/* ---------------- Footer payment badges: one calm row ---------------- */
+.footer-payment {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-left: 0;
+    margin: 6px 0;
+    list-style: none;
+}
+
+.footer-payment li {
+    line-height: 1;
+}
+
+.footer-payment img {
+    height: 26px;
+    width: auto;
+    border-radius: 4px;
+    display: block;
+}
+
+@media (max-width: 991px) {
+    .footer-payment { justify-content: center; }
 }

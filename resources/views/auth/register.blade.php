@@ -69,8 +69,8 @@
         button:active { transform: translateY(0) scale(.98); }
         .links { display:flex; justify-content:space-between; align-items:center; margin-top:20px; font-size:13.5px; }
         .links a { color: var(--ecom-primary); text-decoration: none; font-weight: 500; }
-        .error { background: rgba(179,55,47,.08); border-left: 3px solid var(--ecom-danger); color: var(--ecom-danger); font-size:13.5px; padding:11px 14px; border-radius:8px; margin-bottom: 18px; }
-        .hint { margin-top: 22px; padding:12px 14px; background: rgba(47,93,80,.06); border-radius: var(--ecom-radius-sm); font-size:12.5px; color: var(--ecom-muted; text-align:center; }
+        .error { background: rgba(179,55,47,.08); border: 1px solid rgba(179,55,47,.25); color: var(--ecom-danger); font-size:13.5px; padding:11px 14px; border-radius:8px; margin-bottom: 18px; }
+        .hint { margin-top: 22px; padding:12px 14px; background: rgba(47,93,80,.06); border-radius: var(--ecom-radius-sm); font-size:12.5px; color: var(--ecom-muted); text-align:center; }
     </style>
 </head>
 <body>
@@ -89,16 +89,16 @@
         <form method="POST" action="{{ url('/register') }}">
             @csrf
             <label for="name">Full name</label>
-            <input id="name" name="name" type="text" required placeholder="John Doe" autofocus>
+            <input id="name" name="name" type="text" required placeholder="John Doe" autocomplete="name" spellcheck="false" autofocus>
 
             <label for="email">Email address</label>
-            <input id="email" name="email" type="email" required placeholder="you@example.com">
+            <input id="email" name="email" type="email" required placeholder="you@example.com" autocomplete="email" spellcheck="false" inputmode="email">
 
             <label for="password">Password</label>
-            <input id="password" name="password" type="password" required minlength="8" placeholder="At least 8 characters">
+            <input id="password" name="password" type="password" required minlength="8" placeholder="At least 8 characters" autocomplete="new-password">
 
             <label for="password-confirm">Confirm password</label>
-            <input id="password-confirm" name="password_confirmation" type="password" required placeholder="Repeat the password">
+            <input id="password-confirm" name="password_confirmation" type="password" required placeholder="Repeat the password" autocomplete="new-password">
 
             <button type="submit">Create account</button>
         </form>

@@ -1,5 +1,7 @@
 @extends('client.layouts.app')
 
+@section('title', 'Shopping cart')
+
 @section('content')
 
         <!-- Start page content -->
@@ -11,48 +13,49 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="section-title text-center mb-40">
-                                <h2 class="uppercase">Shopping cart</h2>
-                                <h6>Review the products in your cart before heading to checkout.</h6>
+                                <h1 class="uppercase">Shopping cart</h1>
+                                <p class="section-sub">Review the products in your cart before heading to checkout.</p>
                             </div>
 
                             @if($cartItems->isNotEmpty())
                             <div class="shopping-cart-content">
                                 <div class="table-content table-responsive mb-50">
-                                    <table class="text-center">
+                                    <table class="text-center ecom-cart-table">
                                         <thead>
                                             <tr>
-                                                <th class="product-thumbnail">Product</th>
-                                                <th class="product-price">Price</th>
-                                                <th class="product-quantity">Quantity</th>
-                                                <th class="product-subtotal">Total</th>
-                                                <th class="product-remove">Remove</th>
+                                                <th class="product-thumbnail" scope="col">Product</th>
+                                                <th class="product-price" scope="col">Price</th>
+                                                <th class="product-quantity" scope="col">Quantity</th>
+                                                <th class="product-subtotal" scope="col">Total</th>
+                                                <th class="product-remove" scope="col"><span class="visually-hidden">Remove</span></th>
                                             </tr>
                                         </thead>
                                         <tbody id="product-container">
                                             @foreach($cartItems as $item)
-                                            <tr>
+                                            <tr data-cart-item="{{ $item->id }}">
                                                 <td class="product-thumbnail">
                                                     <div class="pro-thumbnail-img">
-                                                        <img src="{{ asset('storage/images/product/'.$item->product->image) }}" alt="{{ $item->name }}">
+                                                        <a href="/single_product/{{ $item->product_id }}">
+                                                            <img src="{{ ($item->product && $item->product->image) ? asset('storage/images/product/'.$item->product->image) : asset('client/img/product/1.jpg') }}" alt="{{ $item->name }}" loading="lazy" decoding="async">
+                                                        </a>
                                                     </div>
                                                     <div class="pro-thumbnail-info text-start">
                                                         <h6 class="product-title-2">
-                                                            <a href="/single_product">{{ $item->name }}</a>
+                                                            <a href="/single_product/{{ $item->product_id }}">{{ $item->name }}</a>
                                                         </h6>
-                                                        <p>Product ID: {{ $item->product_id }}</p>
                                                     </div>
                                                 </td>
                                                 <td class="product-price">${{ $item->prix }}</td>
                                                 <td class="product-quantity">
-                                                    <div class="cart-plus-minus f-left">
-                                                        <div class="dec qtybutton"><button onclick="decQuantity('{{ $item->id }}')">-</button></div>
-                                                        <input type="text" value="{{ $item->quantity }}" name="qtybutton" class="cart-plus-minus-box" data-product-id="{{ $item->id }}" readonly>
-                                                        <div class="inc qtybutton"><button onclick="incQuantity('{{ $item->id }}')">+</button></div>
+                                                    <div class="cart-plus-minus f-left ecom-qty">
+                                                        <div class="dec qtybutton"><button type="button" onclick="decQuantity('{{ $item->id }}')" aria-label="Decrease quantity of {{ $item->name }}">âˆ’</button></div>
+                                                        <input type="text" inputmode="numeric" value="{{ $item->quantity }}" name="qtybutton" class="cart-plus-minus-box" data-product-id="{{ $item->id }}" readonly aria-label="Quantity of {{ $item->name }}">
+                                                        <div class="inc qtybutton"><button type="button" onclick="incQuantity('{{ $item->id }}')" aria-label="Increase quantity of {{ $item->name }}">+</button></div>
                                                     </div>
                                                 </td>
                                                 <td class="product-subtotal">${{ number_format($item->prix * $item->quantity, 2) }}</td>
                                                 <td class="product-remove">
-                                                    <button onclick="Remove('{{ $item->id }}')"><i class="zmdi zmdi-close"></i></button>
+                                                    <button type="button" onclick="Remove('{{ $item->id }}')" aria-label="Remove {{ $item->name }} from cart"><i class="zmdi zmdi-close" aria-hidden="true"></i></button>
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -61,59 +64,23 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="coupon-discount box-shadow p-30 mb-50">
-                                            <h6 class="widget-title border-left mb-20">Coupon discount</h6>
-                                            <p>Enter your coupon code if you have one!</p>
-                                            <input type="text" id="coupon-code" placeholder="Enter your code here.">
-                                            <button class="submit-btn-1 black-bg btn-hover-2" type="button" id="apply-coupon">Apply coupon</button>
-                                            <p id="coupon-message" class="mt-10"></p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 offset-md-6">
                                         <div class="payment-details box-shadow p-30 mb-50">
-                                            <h6 class="widget-title border-left mb-20">Payment details</h6>
+                                            <h2 class="widget-title border-left mb-20">Payment details</h2>
                                             <table>
                                                 <tr>
-                                                    <td class="td-title-1">Cart Subtotal</td>
+                                                    <td class="td-title-1">Cart subtotal</td>
                                                     <td class="td-title-2">${{ number_format($totalPrice, 2) }}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="td-title-1">Shipping and Handling</td>
-                                                    <td class="td-title-2">$0.00</td>
+                                                    <td class="td-title-1">Shipping and handling</td>
+                                                    <td class="td-title-2">Free</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="td-title-1">Vat</td>
-                                                    <td class="td-title-2">$0.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="order-total">Order Total</td>
+                                                    <td class="order-total">Order total</td>
                                                     <td class="order-total-price">${{ number_format($totalPrice, 2) }}</td>
                                                 </tr>
                                             </table>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="culculate-shipping box-shadow p-30">
-                                            <h6 class="widget-title border-left mb-20">Calculate shipping</h6>
-                                            <p>Enter your coupon code if you have one!</p>
-                                            <div class="row">
-                                                <div class="col-sm-4 col-xs-12">
-                                                    <input type="text" id="ship-country" placeholder="Country">
-                                                </div>
-                                                <div class="col-sm-4 col-xs-12">
-                                                    <input type="text" id="ship-state" placeholder="Region / State">
-                                                </div>
-                                                <div class="col-sm-4 col-xs-12">
-                                                    <input type="text" id="ship-code" placeholder="Post code">
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <button class="submit-btn-1 black-bg btn-hover-2" type="button" id="get-quote">Get a quote</button>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -126,7 +93,7 @@
                             </div>
                             @else
                             <div class="empty-cart box-shadow p-60 text-center">
-                                <h4 class="mb-20">Your cart is empty</h4>
+                                <h2 class="mb-20">Your cart is empty</h2>
                                 <p class="mb-30">Looks like you haven't added anything yet.</p>
                                 <a href="/shop" class="button">Go shopping</a>
                             </div>
@@ -141,102 +108,47 @@
         <!-- End page content -->
 
 <script>
-    var cartCoupons = { 'SAVE10': 0.10 };
+    document.addEventListener('DOMContentLoaded', function () {
+        var csrf = function () { return ($('meta[name="csrf-token"]').attr('content') || ''); };
 
-    function renderCart(items) {
-        var container = $('#product-container');
-        container.empty();
-
-        if (!items || items.length === 0) {
-            container.html('<tr><td colspan="5" class="text-center p-30">Your cart is empty.</td></tr>');
-            return;
+        function settled() {
+            window.location.reload();
         }
 
-        $.each(items, function(index, item) {
-            var row = $('<tr>' +
-                '<td class="product-thumbnail">' +
-                    '<div class="pro-thumbnail-img"><img src="/storage/images/product/' + (item.image || '1.jpg') + '" alt="' + item.name + '" /></div>' +
-                    '<div class="pro-thumbnail-info text-start">' +
-                        '<h6 class="product-title-2"><a href="/single_product/' + item.product_id + '">' + item.name + '</a></h6>' +
-                    '</div>' +
-                '</td>' +
-                '<td class="product-price">' + item.prix + '</td>' +
-                '<td class="product-quantity">' +
-                    '<div class="cart-plus-minus f-left">' +
-                        '<div class="dec qtybutton"><button onclick="decQuantity(' + item.id + ')">-</button></div>' +
-                        '<input type="text" value="' + item.quantity + '" name="qtybutton" class="cart-plus-minus-box" data-product-id="' + item.id + '" readonly>' +
-                        '<div class="inc qtybutton"><button onclick="incQuantity(' + item.id + ')">+</button></div>' +
-                    '</div>' +
-                '</td>' +
-                '<td class="product-subtotal">' + item.line_total + '</td>' +
-                '<td class="product-remove">' +
-                    '<button onclick="Remove(' + item.id + ')" title="Remove"><i class="zmdi zmdi-close"></i></button>' +
-                '</td>' +
-            '</tr>');
-            container.append(row);
-        });
-    }
+        window.incQuantity = function (itemId) {
+            $.ajax({
+                url: '/inc-quantity/' + itemId,
+                type: 'POST',
+                headers: { 'X-CSRF-TOKEN': csrf() },
+                success: settled,
+                error: function (error) {
+                    console.error('Error updating quantity:', error);
+                    if (window.Ecom) { Ecom.toast('Could not update the quantity — please try again', 'error'); }
+                }
+            });
+        };
 
-    function loadCart() {
-        $.ajax({
-            url: '/cart',
-            type: 'GET',
-            dataType: 'json',
-            success: function(response) { renderCart(response.products); updateCartBadge(); },
-            error: function(error) { console.error('Error fetching cart:', error); }
-        });
-    }
+        window.decQuantity = function (itemId) {
+            $.ajax({
+                url: '/dec-quantity/' + itemId,
+                type: 'POST',
+                headers: { 'X-CSRF-TOKEN': csrf() },
+                success: settled,
+                error: function (error) {
+                    console.error('Error updating quantity:', error);
+                    if (window.Ecom) { Ecom.toast('Could not update the quantity — please try again', 'error'); }
+                }
+            });
+        };
 
-    function incQuantity(productId) {
-        $.ajax({
-            url: '/inc-quantity/' + productId,
-            type: 'GET',
-            success: function(response) {
-                var $input = $('.cart-plus-minus-box[data-product-id="' + productId + '"]');
-                var current = parseInt($input.val()) || 1;
-                $input.val(current + 1);
-                loadCart();
-            },
-            error: function(error) { console.error('Error updating product quantity:', error); }
-        });
-    }
-
-    function decQuantity(productId) {
-        var $input = $('.cart-plus-minus-box[data-product-id="' + productId + '"]');
-        var current = parseInt($input.val()) || 1;
-        $.ajax({
-            url: '/update-product-quantity/' + productId,
-            type: 'POST',
-            data: { quantity: current - 1 },
-            success: function(response) { loadCart(); },
-            error: function(error) { console.error('Error updating product quantity:', error); }
-        });
-    }
-
-    function Remove(id) {
-        ecomRemoveFromCart(id, function () { loadCart(); });
-    }
-
-    $('#apply-coupon').on('click', function() {
-        var code = $('#coupon-code').val();
-        var msg = $('#coupon-message');
-        if (Object.prototype.hasOwnProperty.call(cartCoupons, code)) {
-            msg.text('Coupon applied: ' + code);
-            msg.css('color', 'var(--ecom-success)');
-        } else {
-            msg.text('Invalid coupon code.');
-            msg.css('color', 'var(--ecom-danger)');
-        }
+        window.Remove = function (itemId) {
+            if (window.Ecom) {
+                Ecom.removeFromCart(itemId, settled);
+            } else {
+                settled();
+            }
+        };
     });
-
-    $('#get-quote').on('click', function() {
-        var country = $('#ship-country').val();
-        if (!country) { alert('Please enter a country to get a shipping quote.'); return; }
-        alert('Shipping quote for ' + country + ' calculated at checkout.');
-    });
-
-    loadCart();
-
 </script>
 
 @endsection

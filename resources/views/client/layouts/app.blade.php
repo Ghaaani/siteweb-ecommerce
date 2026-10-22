@@ -3,52 +3,41 @@
 
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>{{ config('app.name') }}</title>
-    <meta name="description" content="">
+    <title>@hasSection('title') @yield('title') · {{ config('app.name') }} @else {{ config('app.name') }} @endif</title>
+    @hasSection('meta')
+        <meta name="description" content="@yield('meta')">
+    @else
+        <meta name="description" content="Hand-picked pieces at honest prices, with free delivery on every order. Order in a couple of clicks with your card or PayPal.">
+    @endif
+    <meta name="theme-color" content="#faf8f4">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('client/img/logo/logo.png')}}">
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts (consolidated: every family actually used) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Raleway:400,500,600,700&family=Roboto:400,500,700&display=swap" rel="stylesheet">
 
     <!-- All CSS Files -->
-    <!-- Bootstrap fremwork main css -->
+    <!-- Bootstrap framework main css -->
     <link rel="stylesheet" href="{{ asset('client/css/bootstrap.min.css' )}}">
-    <!-- Nivo-slider css -->
-    <link rel="stylesheet" href="{{ asset('client/lib/css/nivo-slider.css' )}}">
     <!-- This core.css file contents all plugings css file. -->
     <link rel="stylesheet" href="{{ asset('client/css/core.css' )}}">
     <!-- Theme shortcodes/elements style -->
     <link rel="stylesheet" href="{{ asset('client/css/shortcode/shortcodes.css' )}}">
-    <!-- Main site color style -->
     <!-- Theme main style -->
     <link rel="stylesheet" href="{{ asset('client/css/style.css' )}}">
     <!-- Responsive css -->
     <link rel="stylesheet" href="{{ asset('client/css/responsive.css' )}}">
     <!-- User style -->
     <link rel="stylesheet" href="{{ asset('client/css/custom.css' )}}">
-    
-    <!-- Style customizer (Remove these two lines please) -->
-    <link rel="stylesheet" href="{{ asset('client/css/style-customizer.css' )}}">
-    <link href="#" data-style="styles" rel="stylesheet">
-
-    <!-- Modernizr JS -->
-    <script src="{{ asset('client/js/vendor/modernizr-3.11.2.min.js' )}}"></script>
-
-    
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-
 </head>
 
 <body>
+    <a class="ecom-skip-link" href="#main-content">Skip to content</a>
     <!--[if lt IE 8]>
         <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->  
@@ -237,7 +226,12 @@
 
 
 
+        <main id="main-content" class="ecom-main">
+
         @yield('content')
+
+        </main>
+        <!-- END MAIN CONTENT -->
 
 
 
@@ -271,33 +265,25 @@
                         <div class="col-lg-4 col-md-4">
                             <ul class="footer-social footer-social-2">
                                 <li>
-                                    <a class="facebook" href="#" title="Facebook"><i class="zmdi zmdi-facebook"></i></a>
+                                    <span class="facebook" aria-hidden="true"><i class="zmdi zmdi-facebook"></i></span>
                                 </li>
                                 <li>
-                                    <a class="google-plus" href="#" title="Google Plus"><i class="zmdi zmdi-google-plus"></i></a>
+                                    <span class="google-plus" aria-hidden="true"><i class="zmdi zmdi-google-plus"></i></span>
                                 </li>
                                 <li>
-                                    <a class="twitter" href="#" title="Twitter"><i class="zmdi zmdi-twitter"></i></a>
+                                    <span class="twitter" aria-hidden="true"><i class="zmdi zmdi-twitter"></i></span>
                                 </li>
                                 <li>
-                                    <a class="rss" href="#" title="RSS"><i class="zmdi zmdi-rss"></i></a>
+                                    <span class="rss" aria-hidden="true"><i class="zmdi zmdi-rss"></i></span>
                                 </li>
                             </ul>
                         </div>
                         <div class="col-lg-4 col-md-3">
                             <ul class="footer-payment">
-                                <li>
-                                    <a href="#"><img src="{{asset('client/img/payment/1.jpg' )}}" alt="" /></a>
-                                </li>
-                                <li>
-                                    <a href="#"><img src="{{asset('client/img/payment/2.jpg' )}}" alt="" /></a>
-                                </li>
-                                <li>
-                                    <a href="#"><img src="{{asset('client/img/payment/3.jpg' )}}" alt="" /></a>
-                                </li>
-                                <li>
-                                    <a href="#"><img src="{{asset('client/img/payment/4.jpg' )}}" alt="" /></a>
-                                </li>
+                                <li><img src="{{asset('client/img/payment/1.jpg' )}}" alt="Visa accepted" width="45" height="30" loading="lazy" decoding="async"></li>
+                                <li><img src="{{asset('client/img/payment/2.jpg' )}}" alt="Mastercard accepted" width="45" height="30" loading="lazy" decoding="async"></li>
+                                <li><img src="{{asset('client/img/payment/3.jpg' )}}" alt="PayPal accepted" width="45" height="30" loading="lazy" decoding="async"></li>
+                                <li><img src="{{asset('client/img/payment/4.jpg' )}}" alt="American Express accepted" width="45" height="30" loading="lazy" decoding="async"></li>
                             </ul>
                         </div>
                     </div>
@@ -306,113 +292,15 @@
         </footer>
         <!-- END FOOTER AREA -->
 
-        <!-- START QUICKVIEW PRODUCT -->
-        <div id="quickview-wrapper">
-            <!-- Modal -->
-            <div class="modal fade" id="productModal" tabindex="-1" role="dialog">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="modal-product clearfix">
-                                <div class="product-images">
-                                    <div class="main-image images">
-                                        <img alt="" src="{{asset('client/img/product/quickview.jpg' )}}">
-                                    </div>
-                                </div><!-- .product-images -->
-                                
-                                <div class="product-info">
-                                    <h1>Aenean eu tristique</h1>
-                                    <div class="price-box-3">
-                                        <div class="s-price-box">
-                                            <span class="new-price">£160.00</span>
-                                            <span class="old-price">£190.00</span>
-                                        </div>
-                                    </div>
-                                    <a href="/shop" class="see-all">See all features</a>
-                                    <div class="quick-add-to-cart">
-                                        <form method="post" class="cart">
-                                            <div class="numbers-row">
-                                                <input type="number" id="french-hens" value="3" min="1">
-                                            </div>
-                                            <button class="single_add_to_cart_button" type="submit">Add to cart</button>
-                                        </form>
-                                    </div>
-                                    <div class="quick-desc">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam fringilla augue nec est tristique auctor. Donec non est at libero.
-                                    </div>
-                                    <div class="social-sharing">
-                                        <div class="widget widget_socialsharing_widget">
-                                            <h3 class="widget-title-modal">Share this product</h3>
-                                            <ul class="social-icons clearfix">
-                                                <li>
-                                                    <a class="facebook" href="#" target="_blank" title="Facebook">
-                                                        <i class="zmdi zmdi-facebook"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="google-plus" href="#" target="_blank" title="Google +">
-                                                        <i class="zmdi zmdi-google-plus"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="twitter" href="#" target="_blank" title="Twitter">
-                                                        <i class="zmdi zmdi-twitter"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="pinterest" href="#" target="_blank" title="Pinterest">
-                                                        <i class="zmdi zmdi-pinterest"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="rss" href="#" target="_blank" title="RSS">
-                                                        <i class="zmdi zmdi-rss"></i>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div><!-- .product-info -->
-                            </div><!-- .modal-product -->
-                        </div><!-- .modal-body -->
-                    </div><!-- .modal-content -->
-                </div><!-- .modal-dialog -->
-            </div>
-            <!-- END Modal -->
-        </div>
-        <!-- END QUICKVIEW PRODUCT -->    
+    <!-- Placed and deferred so parsing is never blocked -->
 
-
-    <!-- Placed JS at the end of the document so the pages load faster -->
-
-    <!-- jquery latest version -->
-    <script src="{{ asset('client/js/vendor/jquery-3.6.0.min.js' )}}"></script>
-    <script src="{{ asset('client/js/vendor/jquery-migrate-3.3.2.min.js' )}}"></script>
-    <!-- Bootstrap framework js -->
-    <script src="{{ asset('client/js/bootstrap.bundle.min.js' )}}"></script>
-    <!-- jquery.nivo.slider js -->
-    <script src="{{ asset('client/lib/js/jquery.nivo.slider.js' )}}"></script>
+    <script defer src="{{ asset('client/js/vendor/jquery-3.6.0.min.js' )}}"></script>
+    <script defer src="{{ asset('client/js/bootstrap.bundle.min.js' )}}"></script>
     <!-- All js plugins included in this file. -->
-    <script src="{{ asset('client/js/plugins.js' )}}"></script>
+    <script defer src="{{ asset('client/js/plugins.js' )}}"></script>
     <!-- Main js file that contents all jQuery plugins activation. -->
-    <script src="{{ asset('client/js/main.js' )}}"></script>
-    <script src="{{ asset('client/js/ecom-shop.js' )}}"></script>
-
-    <script src="{{ asset('https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js' )}}"></script>
-
-    <script>
-
-        function updateCartBadge() {
-            if (window.ecomUpdateCartBadge) {
-                window.ecomUpdateCartBadge();
-            }
-        }
-
-    </script>
-
+    <script defer src="{{ asset('client/js/main.js' )}}"></script>
+    <script defer src="{{ asset('client/js/ecom-shop.js' )}}"></script>
 
 </body>
 

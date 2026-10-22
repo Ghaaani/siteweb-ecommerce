@@ -1,5 +1,8 @@
 @extends('client.layouts.app')
 
+@section('title', 'Wish list')
+@section('meta', 'Products you saved for later.')
+
 @section('content')
 
         <!-- Start page content -->
@@ -9,8 +12,8 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="section-title text-center mb-40">
-                                <h2 class="uppercase">Wish list</h2>
-                                <h6>Products you saved for later.</h6>
+                                <h1 class="uppercase">Wish list</h1>
+                                <p class="section-sub">Products you saved for later.</p>
                             </div>
 
                             @if ($products->isNotEmpty())
@@ -23,7 +26,7 @@
                                 </div>
                             @else
                                 <div class="empty-cart box-shadow p-60 text-center">
-                                    <h4 class="mb-20">Your wish list is empty</h4>
+                                    <h3 class="mb-20">Your wish list is empty</h3>
                                     <p class="mb-30">Tap the heart on any product to save it here.</p>
                                     <a href="{{ url('/shop') }}" class="button">Browse the collection</a>
                                 </div>

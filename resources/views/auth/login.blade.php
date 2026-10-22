@@ -115,7 +115,7 @@
 
         .error {
             background: rgba(179, 55, 47, 0.08);
-            border-left: 3px solid var(--ecom-danger);
+            border: 1px solid rgba(179, 55, 47, 0.25);
             color: var(--ecom-danger);
             font-size: 13.5px;
             padding: 11px 14px;

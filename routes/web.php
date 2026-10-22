@@ -14,6 +14,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\product_categoryController;
@@ -54,20 +55,20 @@ Route::middleware(['auth', 'admin'])->group(function () {
 // Public shop pages (only the pages that actually exist)
 Route::resource('/about', aboutController::class)->only('index');
 Route::resource('/cart', cartController::class)->only('index');
-Route::resource('/contact', contactController::class)->only('index');
+Route::resource('/contact', contactController::class)->only('index', 'store');
 Route::resource('/checkout', checkoutController::class)->only('index');
 
 Route::get('/index', [indexController::class, 'index']);
 Route::get('/shop', [shopController::class, 'index']);
 Route::get('/cart', [cartController::class, 'index']);
 
-// Cart actions (AJAX)
+// Cart actions (AJAX; state changes are POSTs)
 Route::get('get-products-by-category/{categoryId}', [shopController::class, 'getProductsByCategory']);
-Route::get('insert-Poduct/{productId}', [shopController::class, 'inserProduct']);
-Route::get('remove-product/{id}', [indexController::class, 'removeProduct']);
-Route::get('/inc-quantity/{pId}', [cartController::class, 'incQuantity']);
+Route::post('insert-Poduct/{productId}', [shopController::class, 'inserProduct']);
+Route::post('remove-product/{id}', [cartController::class, 'destroy']);
+Route::post('/inc-quantity/{pId}', [cartController::class, 'incQuantity']);
+Route::post('/dec-quantity/{pId}', [cartController::class, 'decQuantity']);
 Route::post('/update-product-quantity/{id}', [cartController::class, 'updateQuantity'])->name('cart.update');
-Route::delete('/cart/remove/{id}', [cartController::class, 'destroy'])->name('cart.remove');
 
 // Checkout flow
 Route::post('/checkout', [checkoutController::class, 'store'])->name('checkout.store');
@@ -84,6 +85,5 @@ Route::post('/wishlist/toggle/{productId}', [WishlistController::class, 'toggle'
 
 Route::get('/single_product/{id?}', [shopController::class, 'singleProduct'])->name('single_product');
 
-Route::get('/single_blog', function () {
-    return view('single-blog');
-});
+// Newsletter signup (home page)
+Route::post('/subscribe', [SubscriberController::class, 'store'])->name('subscriber.store');

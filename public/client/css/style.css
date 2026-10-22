@@ -186,13 +186,7 @@
   position: relative;
 }
 .banner-1::before {
-  background: rgba(0, 0, 0, 0) url("img/bg/ribbon.png") repeat scroll 0 0;
-  content: "";
-  height: 137px;
-  left: -11px;
-  position: absolute;
-  top: -11px;
-  width: 146px;
+  content: none;
 }
 .ribbon-price {
   left: 15px;

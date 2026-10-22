@@ -1,5 +1,8 @@
 @extends('client.layouts.app')
 
+@section('title', 'My account')
+@section('meta', 'Your profile and order history.')
+
 @section('content')
 
         <!-- Start page content -->
@@ -9,8 +12,8 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="section-title text-center mb-40">
-                                <h2 class="uppercase">My account</h2>
-                                <h6>Your profile and every order you have placed.</h6>
+                                <h1 class="uppercase">My account</h1>
+                                <p class="section-sub">Your profile and every order you have placed.</p>
                             </div>
 
                             @if (session('success'))
@@ -20,7 +23,7 @@
                             <div class="row">
                                 <div class="col-md-4 mb-40">
                                     <div class="box-shadow p-30">
-                                        <h6 class="widget-title border-left mb-20">Profile</h6>
+                                        <h3 class="widget-title border-left mb-20">Profile</h3>
                                         <ul class="bill-address">
                                             <li><span>Name:</span> {{ $user->name }}</li>
                                             <li><span>Email:</span> {{ $user->email }}</li>
@@ -41,11 +44,11 @@
 
                                 <div class="col-md-8">
                                     <div class="box-shadow p-30">
-                                        <h6 class="widget-title border-left mb-20">Order history</h6>
+                                        <h3 class="widget-title border-left mb-20">Order history</h3>
 
                                         @if ($orders->isEmpty())
                                             <div class="empty-cart p-40 text-center">
-                                                <h4 class="mb-20">No orders yet</h4>
+                                                <h3 class="mb-20">No orders yet</h3>
                                                 <p>When you place an order it will show up here.</p>
                                                 <a href="{{ url('/shop') }}" class="button mt-20">Start shopping</a>
                                             </div>
