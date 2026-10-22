@@ -1,4 +1,4 @@
-# siteweb-ecommerce
+# E-commerce Website
 
 A Laravel e-commerce site: public shop (home, shop by category, cart, checkout, about, contact) and an admin area to manage products, categories and the about page.
 
