@@ -7,9 +7,15 @@
     <title>{{ config('app.name') }}</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('client/img/logo/logo.png')}}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- All CSS Files -->
     <!-- Bootstrap fremwork main css -->
@@ -70,20 +76,10 @@
                             <div class="col-lg-8 d-none d-lg-block">
                                 <nav id="primary-menu">
                                     <ul class="main-menu text-center">
-                                        <li><a href="/index">Home</a>                                           
-                                                    <a href="/index"></a>
-                                        </li>
-                                        
-                                        <li><a href="/shop">Products</a>
-                                        </li>
-                                        
-                                        <li>
-                                            <a href="/about">About us</a>
-                                        </li>
-
-                                        <li>
-                                            <a href="/contact">Contact</a>
-                                        </li>
+                                        <li><a href="/index">Home</a></li>
+                                        <li><a href="/shop">Products</a></li>
+                                        <li><a href="/about">About us</a></li>
+                                        <li><a href="/contact">Contact</a></li>
                                     </ul>
                                 </nav>
                             </div>
@@ -108,12 +104,25 @@
                                     </div>
                                     <div class="header-account header-account-2 f-left">
                                         <ul class="user-meta">
-                                            <li><a href="#"><i class="zmdi zmdi-view-headline"></i></a>
+                                            <li>
+                                                <a href="/login"><i class="zmdi zmdi-view-headline"></i></a>
                                                 <ul>
-                                                    <li><a href="#">My Account</a></li>
+                                                    @auth
+                                                        <li><a href="/account">My account</a></li>
+                                                        <li><a href="/account">My orders</a></li>
+                                                    @endauth
                                                     <li><a href="/wishlist">Wish list</a></li>
                                                     <li><a href="/checkout">Checkout</a></li>
-                                                    <li><a href="#">Log in</a></li>        
+                                                    @auth
+                                                        <li>
+                                                            <form action="{{ route('logout') }}" method="POST" style="display:inline">
+                                                                <button type="submit" class="ecom-logout-link">Log out</button>
+                                                            </form>
+                                                        </li>
+                                                    @else
+                                                        <li><a href="/login">Log in</a></li>
+                                                        <li><a href="/register">Create account</a></li>
+                                                    @endauth
                                                 </ul>
                                             </li>
                                         </ul>
@@ -128,7 +137,7 @@
                                                     $nb = $number->count();
                                                 @endphp
 
-                                                <a href="#">
+                                                <a href="/cart">
                                                     <span class="cart-quantity">{{$nb}}</span><br>
                                                     <span class="cart-icon">
                                                         <i class="zmdi zmdi-shopping-cart-plus"></i>
@@ -150,19 +159,19 @@
                                                         <!-- single-cart -->
                                                         <div class="single-cart clearfix">
                                                             <div class="cart-img f-left">
-                                                                <a href="#">
-                                                                    <img src="{{ asset('client/img/cart/1.jpg')}}" alt="Cart Product" />
+                                                                <a href="/single_product/{{ $cart->product_id }}">
+                                                                    <img src="{{ $cart->image ? asset('storage/images/product/'.$cart->image) : asset('client/img/cart/1.jpg') }}" alt="{{ $cart->name }}" />
                                                                 </a>
                                                                 <div class="del-icon">
-                                                                    <button onclick="Remove({{ $cart->id }})">><a href="#"><i class="zmdi zmdi-close"></i></a></button>
+                                                                    <button type="button" title="Remove" onclick="ecomRemoveFromCart({{ $cart->id }})"><i class="zmdi zmdi-close"></i></button>
                                                                 </div>
                                                             </div>
                                                             <div class="cart-info f-left">
                                                                 <h6 class="text-capitalize">
-                                                                    <a href="#">{{$cart->name}}</a>
+                                                                    <a href="/single_product/{{ $cart->product_id }}">{{$cart->name}}</a>
                                                                 </h6>
                                                                 <p>
-                                                                    <span>Prix <strong>:</strong></span>{{$cart->prix}}
+                                                                    <span>Prix <strong>:</strong></span>{{$cart->prix}} × {{$cart->quantity}}
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -180,7 +189,7 @@
                                                             @php
                                                                 $totalPrice = 0;
                                                                 foreach ($number as $item) {
-                                                                $totalPrice += $item->prix;
+                                                                $totalPrice += ($item->prix * $item->quantity);
                                                                 }
                                                                 echo $totalPrice;
                                                             @endphp
@@ -390,28 +399,17 @@
     <script src="{{ asset('client/js/plugins.js' )}}"></script>
     <!-- Main js file that contents all jQuery plugins activation. -->
     <script src="{{ asset('client/js/main.js' )}}"></script>
+    <script src="{{ asset('client/js/ecom-shop.js' )}}"></script>
 
     <script src="{{ asset('https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js' )}}"></script>
 
     <script>
 
-        function Remove(id) {
-        var url ='remove-product/' + id;
-
-        // Fetch products using AJAX
-        $.ajax({
-            url: url,
-            type: 'GET',
-            dataType: 'json',
-            success: function(response) {
-                console.log(response.products);
-            },
-            error: function(error) {
-                console.error('Error fetching products:', error);
+        function updateCartBadge() {
+            if (window.ecomUpdateCartBadge) {
+                window.ecomUpdateCartBadge();
             }
-        });
-    }
-
+        }
 
     </script>
 

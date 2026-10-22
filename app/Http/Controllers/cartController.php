@@ -17,78 +17,211 @@ class cartController extends Controller
     public function index()
     {
         $categories = product_category::All();
-        $cartItem = cart_item::All();
-        $number = cart_item::All();
+        $cartItems = cart_item::all();
         $carts = cart_item::latest()->take(2)->get();
-
+        $number = cart_item::all();
 
         if (request()->expectsJson()) {
-            return response()->json(['products' => $cartItem]);
-        }
-        else {
-            return view('cart', compact('categories','carts','number'))
-            ->with(request()->input('page'));
+            return response()->json(['products' => $cartItems]);
         }
 
-    }
+        $totalPrice = 0;
+        foreach ($cartItems as $item) {
+            $totalPrice += ($item->prix * $item->quantity);
+        }
 
-    public function incQuantity(Request $request, $pId)
-    {
-        // Retrieve the product by ID
-        $product = cart_item::findOrFail($pId);
-
-        // Update the quantity of the product
-        $product->quantity = $product->quantity + 1;
-        $product->save();
-
-        // You can return a response if needed
-        return response()->json(['success' => true, 'message' => 'Product quantity updated successfully']);
+        return view('cart', compact('categories', 'carts', 'number', 'cartItems', 'totalPrice'))->with(request()->input('page'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Add a product to the cart (or increase its quantity if already there).
      */
+    public function store(Request $request, $productId)
+    {
+        $product = product::find($productId);
+
+        if (!$product) {
+            return response()->json(['success' => false, 'message' => 'Product not found'], 404);
+        }
+
+        $item = cart_item::where('product_id', $product->id)->first();
+
+        if ($item) {
+            $item->quantity = (int) $item->quantity + 1;
+            $item->prix = $product->price;
+            $item->save();
+        } else {
+            cart_item::create([
+                'product_id' => $product->id,
+                'name' => $product->name,
+                'prix' => $product->price,
+                'quantity' => 1,
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product added to cart',
+            'cart' => cart_item::all(),
+        ]);
+    }
+
+    /**
+     * Increment a cart item quantity.
+     */
+    public function incQuantity(Request $request, $pId)
+    {
+        $item = cart_item::findOrFail($pId);
+        $item->quantity = (int) $item->quantity + 1;
+        $item->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product quantity updated successfully',
+            'cart_item' => $item,
+            'cart' => cart_item::all(),
+        ]);
+    }
+
+    /**
+     * Decrement a cart item quantity (delete it when it reaches zero).
+     */
+    public function decQuantity(Request $request, $pId)
+    {
+        $item = cart_item::find($pId);
+
+        if (!$item) {
+            return response()->json(['success' => false, 'message' => 'Cart item not found'], 404);
+        }
+
+        $item->quantity = (int) $item->quantity - 1;
+
+        if ((int) $item->quantity <= 0) {
+            $item->delete();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product quantity updated successfully',
+            'cart_item' => $item,
+            'cart' => cart_item::all(),
+        ]);
+    }
+
+    /**
+     * Update cart item quantity to an explicit value.
+     */
+    public function updateQuantity(Request $request, $pId)
+    {
+        $item = cart_item::find($pId);
+
+        if (!$item) {
+            return response()->json(['success' => false, 'message' => 'Cart item not found'], 404);
+        }
+
+        $quantity = (int) $request->input('quantity', $item->quantity);
+        $quantity = max(1, $quantity);
+
+        if ($quantity <= 0) {
+            $item->delete();
+        } else {
+            $item->quantity = $quantity;
+            $item->save();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product quantity updated successfully',
+            'cart_item' => $item,
+            'cart' => cart_item::all(),
+        ]);
+    }
+
+    /**
+     * Remove a cart item.
+     */
+    public function destroy($id)
+    {
+        $item = cart_item::find($id);
+
+        if (!$item) {
+            return response()->json(['success' => false, 'message' => 'Cart item not found'], 404);
+        }
+
+        $item->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product removed from cart',
+            'cart' => cart_item::all(),
+        ]);
+    }
+
+    // ------------------------------------------------------------------
+    // Helper: totals for the whole cart
+    // ------------------------------------------------------------------
+    public static function cartTotal()
+    {
+        $items = cart_item::all();
+        $subtotal = 0;
+        foreach ($items as $item) {
+            $subtotal += ((float) $item->prix) * ((int) $item->quantity);
+        }
+        $shipping = 0;
+        $total = $subtotal + $shipping;
+
+        return [
+            'items' => $items,
+            'subtotal' => round($subtotal, 2),
+            'shipping' => $shipping,
+            'total' => round($total, 2),
+        ];
+    }
+
+    // ------------------------------------------------------------------
+    // Show the form for creating a new resource.
+    // ------------------------------------------------------------------
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    // ------------------------------------------------------------------
+    // Store a newly created resource in storage.
+    // ------------------------------------------------------------------
+    public function storeForm(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // ------------------------------------------------------------------
+    // Display the specified resource.
+    // ------------------------------------------------------------------
     public function show(cart $cart)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    // ------------------------------------------------------------------
+    // Show the form for editing the specified resource.
+    // ------------------------------------------------------------------
     public function edit(cart $cart)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // ------------------------------------------------------------------
+    // Update the specified resource in storage.
+    // ------------------------------------------------------------------
     public function update(Request $request, cart $cart)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(cart $cart)
+    // ------------------------------------------------------------------
+    // Remove the specified resource from storage.
+    // ------------------------------------------------------------------
+    public function destroyResource(cart $cart)
     {
         //
     }

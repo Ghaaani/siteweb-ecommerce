@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         if ($adminEmail && $adminPassword) {
             User::updateOrCreate(
                 ['email' => $adminEmail],
-                ['name' => 'Admin', 'password' => Hash::make($adminPassword)]
+                ['name' => 'Admin', 'password' => Hash::make($adminPassword), 'is_admin' => true]
             );
         }
 

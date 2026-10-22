@@ -8,8 +8,605 @@
 
 Note: This is the file where you can add your custom styles to change the look of the theme. But don't modify "style.css" file.
 
----------------------------------------------------------------*/
+--------------------------------------------------------------*/
 
 /* ----------------------------------------------------
-	You can put your custom css code here: 
+	Custom design system & motion layer (E-commerce Website)
 -------------------------------------------------------*/
+
+:root {
+    --ecom-bg: #faf8f4;
+    --ecom-surface: #ffffff;
+    --ecom-ink: #1b1a17;
+    --ecom-ink-soft: #3a372f;
+    --ecom-muted: #6e675c;
+    --ecom-line: #e9e2d6;
+    --ecom-primary: #2f5d50;
+    --ecom-primary-dark: #24483d;
+    --ecom-accent: #c08552;
+    --ecom-accent-dark: #a06a3c;
+    --ecom-danger: #b3372f;
+    --ecom-success: #2e7d4f;
+    --ecom-star: #d9a13b;
+
+    --ecom-radius: 14px;
+    --ecom-radius-sm: 10px;
+    --ecom-shadow-sm: 0 2px 10px rgba(27, 26, 23, 0.06);
+    --ecom-shadow-md: 0 14px 34px rgba(27, 26, 23, 0.12);
+    --ecom-shadow-lg: 0 28px 60px rgba(27, 26, 23, 0.18);
+
+    --ecom-font: "Inter", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--ecom-font);
+    background: var(--ecom-bg);
+    color: var(--ecom-ink);
+    font-size: 15.5px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--ecom-font);
+    color: var(--ecom-ink);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+a {
+    color: var(--ecom-primary);
+    text-decoration: none;
+    transition: color 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
+}
+
+img {
+    max-width: 100%;
+}
+
+/* ---------------- Buttons ---------------- */
+.button,
+.submit-btn-1,
+.btn,
+.single_add_to_cart_button,
+button.submit-btn-1 {
+    font-family: var(--ecom-font);
+    border: none;
+    cursor: pointer;
+    border-radius: 999px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, background-color 0.25s ease, color 0.25s ease, opacity 0.25s ease;
+    will-change: transform;
+}
+
+.button:hover,
+.submit-btn-1:hover,
+.btn:hover,
+.single_add_to_cart_button:hover,
+button.submit-btn-1:hover {
+    transform: translateY(-2px);
+}
+
+.button:active,
+.submit-btn-1:active,
+.btn:active,
+.single_add_to_cart_button:active,
+button.submit-btn-1:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 30px;
+    font-size: 14px;
+    background: var(--ecom-ink);
+    color: #fff;
+}
+
+.button:hover {
+    background: var(--ecom-primary);
+    box-shadow: var(--ecom-shadow-md);
+}
+
+.button.black-bg {
+    background: var(--ecom-ink);
+}
+
+.button.black-bg:hover {
+    background: var(--ecom-primary);
+}
+
+.single_add_to_cart_button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 22px;
+    font-size: 13px;
+    background: var(--ecom-primary);
+    color: #fff;
+    width: 100%;
+}
+
+.single_add_to_cart_button:hover {
+    background: var(--ecom-primary-dark);
+    box-shadow: var(--ecom-shadow-md);
+}
+
+/* ---------------- Cards / panels ---------------- */
+.box-shadow {
+    box-shadow: var(--ecom-shadow-sm);
+    background: var(--ecom-surface);
+}
+
+/* ---------------- Forms ---------------- */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+select,
+textarea {
+    font-family: var(--ecom-font);
+    font-size: 14.5px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--ecom-line);
+    border-radius: var(--ecom-radius-sm);
+    background: #fff;
+    color: var(--ecom-ink);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    width: 100%;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--ecom-primary);
+    box-shadow: 0 0 0 4px rgba(47, 93, 80, 0.14);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #a49c8d;
+}
+
+/* ---------------- Cart badge ---------------- */
+.cart-quantity {
+    position: absolute;
+    top: -6px;
+    right: -12px;
+    background: var(--ecom-accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+}
+
+.total-cart-in .cart-toggler a {
+    position: relative;
+}
+
+/* ---------------- Product cards ---------------- */
+.product-item {
+    background: var(--ecom-surface);
+    border-radius: var(--ecom-radius);
+    overflow: hidden;
+    box-shadow: var(--ecom-shadow-sm);
+    border: 1px solid rgba(233, 226, 214, 0.6);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+}
+
+.product-item:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--ecom-shadow-md);
+}
+
+.product-item .product-img {
+    overflow: hidden;
+}
+
+.product-item .product-img img {
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.product-item:hover .product-img img {
+    transform: scale(1.07);
+}
+
+.product-item .action-button {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+    margin-top: 12px;
+}
+
+.product-item .action-button li a,
+.product-item .action-button li button {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ecom-bg);
+    border: 1px solid var(--ecom-line);
+    color: var(--ecom-ink);
+    transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.product-item .action-button li a:hover,
+.product-item .action-button li button:hover {
+    background: var(--ecom-primary);
+    border-color: var(--ecom-primary);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: var(--ecom-shadow-sm);
+}
+
+.product-item .pro-price {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ecom-ink);
+}
+
+/* ---------------- Motion ---------------- */
+@keyframes ecomFadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ecomFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes ecomPop {
+    0% { transform: scale(0.92); opacity: 0; }
+    70% { transform: scale(1.03); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.ecom-anim-fade-up {
+    animation: ecomFadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ecom-anim-fade-in {
+    animation: ecomFadeIn 0.6s ease both;
+}
+
+.ecom-anim-pop {
+    animation: ecomPop 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ---------------- Header ---------------- */
+.header-area .primary-menu .main-menu {
+    display: flex;
+    justify-content: center;
+    gap: 34px;
+}
+
+.header-area .primary-menu .main-menu a {
+    position: relative;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ecom-ink);
+    padding: 8px 0;
+}
+
+.header-area .primary-menu .main-menu a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--ecom-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.header-area .primary-menu .main-menu a:hover::after {
+    transform: scaleX(1);
+}
+
+/* ---------------- Motion keyframes for badges / toasts ---------------- */
+@keyframes ecomBadgePop {
+    0% { transform: scale(0.6); }
+    60% { transform: scale(1.35); }
+    100% { transform: scale(1); }
+}
+
+.cart-quantity.bump {
+    animation: ecomBadgePop 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------------- Section headings ---------------- */
+.section-title h2 {
+    font-size: 34px;
+}
+
+.section-title h6 {
+    color: var(--ecom-muted);
+    margin-top: 6px;
+}
+
+/* ---------------- Toasts ---------------- */
+#ecom-toast-container {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ecom-toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--ecom-ink);
+    color: #fff;
+    padding: 14px 20px;
+    border-radius: 999px;
+    box-shadow: var(--ecom-shadow-md);
+    font-size: 14px;
+    font-weight: 500;
+    animation: ecomToastIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.ecom-toast i {
+    font-size: 20px;
+}
+
+.ecom-toast--success i {
+    color: #6ee7a8;
+}
+
+.ecom-toast--error {
+    background: var(--ecom-danger);
+}
+
+.ecom-toast.is-leaving {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+@keyframes ecomToastIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---------------- Product card extras ---------------- */
+.ecom-product-card {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.ecom-product-card .product-info {
+    padding: 18px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.ecom-product-card .product-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.ecom-product-card .product-title a {
+    color: var(--ecom-ink);
+}
+
+.ecom-product-card .product-title a:hover {
+    color: var(--ecom-primary);
+}
+
+.ecom-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background: var(--ecom-primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 999px;
+}
+
+.ecom-card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 16px;
+}
+
+.ecom-card-actions button {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 999px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.ecom-card-actions button:hover {
+    transform: translateY(-2px);
+}
+
+.ecom-card-actions button:active {
+    transform: translateY(0) scale(0.97);
+}
+
+.ecom-btn-add {
+    background: var(--ecom-bg);
+    border-color: var(--ecom-line);
+    color: var(--ecom-ink);
+}
+
+.ecom-btn-add:hover {
+    background: var(--ecom-primary);
+    border-color: var(--ecom-primary);
+    color: #fff;
+    box-shadow: var(--ecom-shadow-sm);
+}
+
+.ecom-btn-buy {
+    background: var(--ecom-ink);
+    color: #fff;
+}
+
+.ecom-btn-buy:hover {
+    background: var(--ecom-primary);
+    box-shadow: var(--ecom-shadow-sm);
+}
+
+/* ---------------- Empty state ---------------- */
+.empty-cart {
+    background: var(--ecom-surface);
+    border-radius: var(--ecom-radius);
+    border: 1px solid var(--ecom-line);
+}
+
+.empty-cart h4 {
+    font-size: 22px;
+}
+
+.empty-cart p {
+    color: var(--ecom-muted);
+}
+
+/* ---------------- Wishlist heart ---------------- */
+.ecom-wish {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--ecom-line);
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--ecom-ink);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 17px;
+    backdrop-filter: blur(4px);
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ecom-wish:hover {
+    transform: scale(1.1);
+    background: #fff;
+    color: var(--ecom-danger);
+    box-shadow: var(--ecom-shadow-sm);
+}
+
+.ecom-wish.is-active {
+    background: var(--ecom-danger);
+    border-color: var(--ecom-danger);
+    color: #fff;
+}
+
+/* ---------------- Status pills ---------------- */
+.ecom-status {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    background: rgba(110, 103, 92, 0.12);
+    color: var(--ecom-muted);
+}
+
+.ecom-status--paid,
+.ecom-status--completed {
+    background: rgba(46, 125, 79, 0.12);
+    color: var(--ecom-success);
+}
+
+.ecom-status--pending,
+.ecom-status--shipped {
+    background: rgba(217, 161, 59, 0.16);
+    color: #9a6c14;
+}
+
+.ecom-status--cancelled,
+.ecom-status--failed {
+    background: rgba(179, 55, 47, 0.12);
+    color: var(--ecom-danger);
+}
+
+/* ---------------- Logout link inside the account dropdown ---------------- */
+.ecom-logout-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: var(--ecom-primary);
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.25s ease;
+}
+
+.ecom-logout-link:hover {
+    color: var(--ecom-accent-dark);
+}
+
+/* ---------------- Thank you icon ---------------- */
+.thankyou-icon {
+    width: 78px;
+    height: 78px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: rgba(46, 125, 79, 0.12);
+    color: var(--ecom-success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    animation: ecomPop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}

@@ -18,6 +18,11 @@ class shopController extends Controller
 
         $productss = product::All();
 
+        $categoryId = request('category');
+        if ($categoryId) {
+            $productss = product::where('category_id', $categoryId)->get();
+        }
+
         $carts = cart_item::latest()->take(2)->get();
 
         $number = cart_item::All();
@@ -27,9 +32,36 @@ class shopController extends Controller
             return response()->json(['products' => $productss]);
         }
         else {
-            return view('shop', compact('categories','carts', 'number'))->with(request()->input('page'));
+            return view('shop', compact('categories','carts','number','productss'))->with(request()->input('page'));
         }
 
+    }
+
+    public function singleProduct($id = null)
+    {
+        $product = $id ? product::find($id) : product::first();
+
+        $categories = product_category::All();
+
+        if (!$product) {
+            // Nothing to show yet: fall back to the shop grid instead of a redirect.
+            return view('shop', [
+                'categories' => $categories,
+                'carts' => cart_item::latest()->take(2)->get(),
+                'number' => cart_item::All(),
+                'productss' => product::All(),
+            ]);
+        }
+
+        $carts = cart_item::latest()->take(2)->get();
+        $number = cart_item::All();
+
+        $related = product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->take(4)
+            ->get();
+
+        return view('single-product', compact('product', 'categories', 'carts', 'number', 'related'));
     }
 
     public function getProductsByCategory($category_id)
@@ -52,6 +84,7 @@ class shopController extends Controller
 
         if ($existingCartItem) {
             $existingCartItem->quantity++;
+            $existingCartItem->prix = $product->price;
             $existingCartItem->save();
         } else {
             $cart_item = new Cart_Item();
@@ -61,12 +94,10 @@ class shopController extends Controller
             $cart_item->quantity = 1;
             $cart_item->save();
         }
-        }   
+        }
 
 
-        return response()->json(['products' => $product]);
+        return response()->json(['success' => true, 'products' => $product, 'cart' => cart_item::all()]);
     }
 
 }
-
-

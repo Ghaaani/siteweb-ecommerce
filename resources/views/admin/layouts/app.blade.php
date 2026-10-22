@@ -185,6 +185,14 @@
                         <a href="{{ route('aboutus.index')}}" href="javascript:void()" aria-expanded="false">
                         <i class="icon icon-layout-25"></i><span class="nav-text"> About us</span></a>
                     </li>
+                    <li>
+                        <a href="{{ route('orders.index') }}" aria-expanded="false">
+                        <i class="icon icon-layout-25"></i><span class="nav-text"> Orders</span></a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/index') }}" aria-expanded="false">
+                        <i class="icon icon-layout-25"></i><span class="nav-text"> View shop</span></a>
+                    </li>
                 </ul>
             </div>
         </div>
